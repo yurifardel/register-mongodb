@@ -38,10 +38,6 @@ router.post("/authenticate", async (request, response) => {
     return response.status(400).send({ error: "invalid password" });
   }
 
-  // bcrypt.compare(passwordCovertToString, user.password, (err, result) => {
-  //   console.log(err, result);
-  // });
-
   response.send({ user });
 });
 
