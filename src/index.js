@@ -8,5 +8,5 @@ app.use(bodyParser.urlencoded({ extended: false }));
 require("../db/controller/authController")(app);
 
 app.listen(3333, () => {
-  console.log("express listen in port 3333");
+  console.log("express listening at port 3333");
 });
