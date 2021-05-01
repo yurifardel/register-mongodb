@@ -32,13 +32,17 @@ router.post("/authenticate", async (request, response) => {
     return response.status(400).send({ error: "user not found" });
   }
 
-  console.log(user.password, user.password);
+  const passwordCovertToString = password.toString();
 
-  if (!(await bcrypt.compare(user.password))) {
+  if (!(await bcrypt.compare(passwordCovertToString, user.password))) {
     return response.status(400).send({ error: "invalid password" });
   }
 
-  return response.send({ user });
+  // bcrypt.compare(passwordCovertToString, user.password, (err, result) => {
+  //   console.log(err, result);
+  // });
+
+  response.send({ user });
 });
 
 module.exports = (app) => app.use("/auth", router);
