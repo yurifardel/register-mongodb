@@ -7,6 +7,14 @@ const User = require("../models/User");
 
 const router = express.Router();
 
+function generationToken(params = {}) {
+  const token = jwt.sign(params, authConfig.secret, {
+    expiresIn: 86400,
+  });
+
+  return token;
+}
+
 router.post("/register", async (request, response) => {
   const { email } = request.body;
 
@@ -15,11 +23,14 @@ router.post("/register", async (request, response) => {
       return response.status(400)({ error: "user already exists" });
 
     const user = User.create(request.body);
+    // user.password = undefined;
 
-    user.password = undefined;
-    user.then((Users) => {
-      return response.send({ Users });
+    const dataPromise = user.then((user) => {
+      user.password = undefined;
+      response.send({ user, token: generationToken({ id: user.id }) });
     });
+
+    return dataPromise;
   } catch (err) {
     return response.status(400).send({ error: "Registration failed" });
   }
@@ -40,13 +51,13 @@ router.post("/authenticate", async (request, response) => {
     return response.status(400).send({ error: "invalid password" });
   }
 
+  // const token = jwt.sign({ id: user.id }, authConfig.secret, {
+  //   expiresIn: 86400,
+  // });
+
   user.password = undefined;
 
-  const token = jwt.sign({ id: user.id }, authConfig.secret, {
-    expiresIn: 86400,
-  });
-
-  response.send({ user, token });
+  response.send({ user, token: generationToken({ id: user.id }) });
 });
 
 module.exports = (app) => app.use("/auth", router);
