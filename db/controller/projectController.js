@@ -6,7 +6,11 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.get("/", (request, response) => {
-  return response.send({ ok: true });
+  try {
+    return response.send({ ok: true, user: request.userId });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 module.exports = (app) => app.use("/project", router);
