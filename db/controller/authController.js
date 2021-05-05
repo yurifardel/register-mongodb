@@ -87,7 +87,7 @@ router.post("/forgot_password", async (request, response) => {
       },
     });
 
-    // console.log(token, now);
+    console.log(token, now);
 
     mailer.sendEmail(
       {
