@@ -87,12 +87,22 @@ router.post("/forgot_password", async (request, response) => {
       },
     });
 
-    console.log(token, now);
+    // console.log(token, now);
 
-    mailer.sendEmail(
-      {
+    mailer.sendMail({
         to: email,
-        from: 'yuri@email.com.br' 
+        from: 'yuri@outlook.com.br' ,
+        template: 'auth/password_forgot',
+        context: {token},
+      
+      },(err) =>{
+        
+        console.log(err)
+        if(err){
+          return response.status(400).send({error: 'cannot send forgot password email'})
+        }
+        
+        return response.status(200).send({success: 'email sent success'});
       }
     )
 
