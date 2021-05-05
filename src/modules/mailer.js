@@ -1,7 +1,8 @@
 const nodemailer = require("nodemailer");
-const json = require("../../lib/config/mailer.json");
+const jsonConfigMailer = require("../../lib/config/mailer.json");
+const hbs = require("nodemailer-express-handlebars");
 
-const { host, pass, port, user } = json;
+const { host, pass, port, user } = jsonConfigMailer;
 
 const transport = nodemailer.createTransport({
   host: host,
@@ -11,5 +12,7 @@ const transport = nodemailer.createTransport({
     pass: pass,
   },
 });
+
+transport.use("compile", hbs({}));
 
 module.exports = transport;
