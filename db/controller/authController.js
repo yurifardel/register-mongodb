@@ -77,6 +77,7 @@ router.post("/forgot_password", async (request, response) => {
     const token = crypto.randomBytes(20).toString("HEX");
 
     const now = new Date();
+
     now.setHours(now.getHours() + 1);
 
     await User.findByIdAndUpdate(user.id, {
@@ -96,7 +97,6 @@ router.post("/forgot_password", async (request, response) => {
         context: { token },
       },
       (err) => {
-        console.log(err);
         if (err) {
           return response
             .status(400)
@@ -120,6 +120,8 @@ router.post("/reset_password", async (request, response) => {
     const user = await User.findOne({ email }).select(
       "+passwordResetToken passwordResetExpires"
     );
+
+    console.log(user);
 
     if (!user) {
       return response.status(400).send({ error: "user not found" });
