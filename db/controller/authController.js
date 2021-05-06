@@ -5,8 +5,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
 const authConfig = require("../../lib/config/auth.json");
-const mailer = require('../../src/modules/mailer');
-
+const mailer = require("../../src/modules/mailer");
 
 const User = require("../models/User");
 
@@ -81,7 +80,7 @@ router.post("/forgot_password", async (request, response) => {
     now.setHours(now.getHours() + 1);
 
     await User.findByIdAndUpdate(user.id, {
-      '$set': {
+      $set: {
         passwordResetToken: token,
         passwordResetExpires: now,
       },
@@ -89,27 +88,64 @@ router.post("/forgot_password", async (request, response) => {
 
     // console.log(token, now);
 
-    mailer.sendMail({
+    mailer.sendMail(
+      {
         to: email,
-        from: 'yuri@outlook.com.br' ,
-        template: 'auth/password_forgot',
-        context: {token},
-      
-      },(err) =>{
-        
-        console.log(err)
-        if(err){
-          return response.status(400).send({error: 'cannot send forgot password email'})
+        from: "yuri@outlook.com.br",
+        template: "auth/password_forgot",
+        context: { token },
+      },
+      (err) => {
+        console.log(err);
+        if (err) {
+          return response
+            .status(400)
+            .send({ error: "cannot send forgot password email" });
         }
-        
-        return response.status(200).send({success: 'email sent success'});
-      }
-    )
 
+        return response.status(200).send({ success: "email sent success" });
+      }
+    );
   } catch (err) {
     return response
       .status(400)
       .send({ error: "error on forgot password, try again" });
+  }
+});
+
+router.post("/reset_password", async (request, response) => {
+  try {
+    const { email, token, password } = request.body;
+
+    const user = await User.findOne({ email }).select(
+      "+passwordResetToken passwordResetExpires"
+    );
+
+    if (!user) {
+      return response.status(400).send({ error: "user not found" });
+    }
+
+    if (token !== user.passwordResetToken) {
+      return response.status(400).send({ error: "token invalid" });
+    }
+
+    const now = new Date();
+
+    if (now > user.passwordResetExpires) {
+      return response
+        .status(400)
+        .send({ error: "token expired, generate a new one" });
+    }
+
+    user.password = password;
+
+    await user.save();
+
+    return response.status(200).send({ success: "reset password success" });
+  } catch (error) {
+    return response
+      .status(400)
+      .send({ error: "cannot reset password, try again" });
   }
 });
 
