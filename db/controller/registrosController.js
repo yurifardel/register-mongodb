@@ -5,7 +5,7 @@ const modelUser = require("../models/User");
 const modelRegistros = require("../models/Registros");
 
 router.post("/", async (req, res) => {
-  const user = modelUser.find();
+  const user = modelUser.find().limit(3);
 
   const userPromiseReturn = user.then(async (user) => {
     await modelRegistros.update({
