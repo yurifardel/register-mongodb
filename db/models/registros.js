@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
 const RegistroSchema = new mongoose.Schema({
-  registros: {
-    type: [],
-  },
   pagina: {
     type: Number,
     requered: true,
+  },
+  registros: {
+    type: [],
   },
 });
 
