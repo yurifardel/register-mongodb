@@ -30,5 +30,3 @@ module.exports = (request, response, next) => {
     return next();
   });
 };
-
-//art
