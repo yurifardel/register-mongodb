@@ -6,9 +6,11 @@ const router = express.Router();
 
 router.use(authMiddleware);
 
-router.get("/", (request, response) => {
+router.get("/", async (request, response) => {
   try {
-    return response.send({ ok: true, user: request.userId });
+    const projeto = await Projeto.find();
+
+    return response.send({ projeto });
   } catch (err) {
     console.log(err);
   }
@@ -24,7 +26,10 @@ router.get("/:projectId", async (request, response) => {
 
 router.post("/", async (request, response) => {
   try {
-    const projeto = await Projeto.create(request.body);
+    const projeto = await Projeto.create({
+      ...request.body,
+      user: request.userId,
+    });
 
     return response.send({ projeto });
   } catch (err) {
@@ -42,7 +47,11 @@ router.put("/:projectId", async (request, response) => {
 
 router.delete("/:projectId", async (request, response) => {
   try {
-    return response.send({ user: request.userId });
+    const projeto = await Projeto.findOne();
+
+    await projeto.delete();
+
+    return response.send({ success: "Tarefa deletada com sucesso" });
   } catch (err) {
     console.log(err);
   }
