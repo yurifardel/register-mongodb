@@ -1,5 +1,6 @@
 const express = require("express");
 const authMiddleware = require("../../src/middleware/auth");
+const Projeto = require("../models/project");
 
 const router = express.Router();
 
@@ -23,13 +24,15 @@ router.get("/:projectId", async (request, response) => {
 
 router.post("/", async (request, response) => {
   try {
-    return response.send({ user: request.userId });
+    const projeto = await Projeto.create(request.body);
+
+    return response.send({ projeto });
   } catch (err) {
     console.log(err);
   }
 });
 
-router.put("/:projectId", async (request, repsonse) => {
+router.put("/:projectId", async (request, response) => {
   try {
     return response.send({ user: request.userId });
   } catch (err) {
@@ -37,7 +40,7 @@ router.put("/:projectId", async (request, repsonse) => {
   }
 });
 
-router.delete("/:projectId", async (request, repsonse) => {
+router.delete("/:projectId", async (request, response) => {
   try {
     return response.send({ user: request.userId });
   } catch (err) {
