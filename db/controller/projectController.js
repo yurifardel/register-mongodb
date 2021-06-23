@@ -38,11 +38,15 @@ router.post("/", async (request, response) => {
       user: request.userId,
     });
 
-    tasks.map((task) => {
-      const projetoTask = new Task({ ...task, projeto: projeto._id });
+    await Promise.all(
+      tasks.map(async (task) => {
+        const projetoTask = new Task({ ...task, projeto: projeto._id });
 
-      projetoTask.save().then((task) => projeto.tasks.push(task));
-    });
+        await projetoTask.save();
+
+        projeto.tasks.push(projetoTask);
+      })
+    );
 
     await projeto.save();
 
