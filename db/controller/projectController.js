@@ -57,6 +57,19 @@ router.post("/", async (request, response) => {
   }
 });
 
+router.post("/:projectId", async (request, response) => {
+  const { title } = request.body;
+
+  const tasks = Task.create({
+    title,
+    assignedTo: request.userId,
+  });
+
+  // const projeto = await Projeto.findById(request.params.projectId);
+
+  return response.send(tasks);
+});
+
 router.put("/:projectId", async (request, response) => {
   try {
     const { title, description, tasks } = request.body;
