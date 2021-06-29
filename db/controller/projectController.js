@@ -58,16 +58,29 @@ router.post("/", async (request, response) => {
 });
 
 router.post("/:projectId", async (request, response) => {
-  const { title } = request.body;
+  try {
+    const { title } = request.body;
+    const { projectId } = request.params;
 
-  const tasks = Task.create({
-    title,
-    assignedTo: request.userId,
-  });
+    const projeto = await Projeto.findById(projectId);
 
-  // const projeto = await Projeto.findById(request.params.projectId);
+    const tasks = Task.create({
+      title,
+      assignedTo: request.userId,
+    });
 
-  return response.send(tasks);
+    const taskId = await tasks.then((task) => {
+      return task.id;
+    });
+
+    projeto.tasks.push(taskId);
+
+    await projeto.save();
+
+    return response.send({ success: "task created success" });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 router.put("/:projectId", async (request, response) => {
